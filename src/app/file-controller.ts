@@ -80,12 +80,31 @@ export class FileController {
       });
     }
 
+    if (newFiles.length > 0) {
+      this.selectedId = this.entries[this.entries.length - 1].id;
+    }
+
     this.notify();
 
     if (!this.processing && newFiles.length > 0) {
       this.processQueue.push(...newFiles);
       this.processFiles();
     }
+  }
+
+  async addPaths(paths: string[]): Promise<void> {
+    const { readFile } = await import("@tauri-apps/plugin-fs");
+    const files: File[] = [];
+
+    for (const path of paths) {
+      const name = path.split(/[/\\]/).pop() || "unknown.png";
+      if (!name.toLowerCase().endsWith(".png")) continue;
+
+      const bytes = await readFile(path);
+      files.push(new File([bytes], name, { type: "image/png" }));
+    }
+
+    await this.addFiles(files);
   }
 
   private async processFiles(): Promise<void> {
@@ -149,9 +168,7 @@ export async function openFiles(controller: FileController): Promise<void> {
         if (typeof item === "string") {
           const { readFile } = await import("@tauri-apps/plugin-fs");
           const bytes = await readFile(item);
-          const blob = new Blob([bytes], { type: "image/png" });
-          const name = item.split(/[/\\]/).pop() || "unknown.png";
-          files.push(new File([blob], name, { type: "image/png" }));
+          files.push(new File([bytes], item.split(/[/\\]/).pop() || "unknown.png", { type: "image/png" }));
         }
       }
 

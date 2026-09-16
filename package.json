@@ -1,7 +1,7 @@
 {
   "name": "prompt-lens",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.5.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,6 +14,7 @@
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-dialog": "^2.0.0",
     "@tauri-apps/plugin-fs": "^2.0.0",
+    "@tauri-apps/plugin-opener": "^2.5.5",
     "fflate": "^0.8.2",
     "saxes": "^6.0.0"
   },

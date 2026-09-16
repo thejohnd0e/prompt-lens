@@ -1,5 +1,5 @@
 import { FileController } from "../app/file-controller";
-import { getErrorMessage } from "../app/error-messages";
+import { currentMonitor, getCurrentWindow, LogicalSize } from "@tauri-apps/api/window";
 
 function createField(
   label: string,
@@ -51,47 +51,34 @@ function createField(
   return field;
 }
 
-function showErrorDetails(
-  container: HTMLElement,
-  errorMessage?: string
-): void {
-  if (!errorMessage) return;
+async function fitWindowToContent(container: HTMLElement): Promise<void> {
+  try {
+    const window = getCurrentWindow();
+    const scaleFactor = await window.scaleFactor();
+    const currentSize = await window.innerSize();
+    const monitor = await currentMonitor();
+    const maxHeight = monitor
+      ? Math.floor(monitor.workArea.size.height / monitor.scaleFactor)
+      : 900;
+    const toolbarHeight = document.querySelector<HTMLElement>(".toolbar")?.offsetHeight ?? 0;
+    const contentHeight = container.scrollHeight;
+    const height = Math.min(
+      Math.max(contentHeight + toolbarHeight + 16, 480),
+      Math.max(maxHeight - 32, 480)
+    );
+    const width = Math.max(Math.round(currentSize.width / scaleFactor), 760);
 
-  const details = document.createElement("div");
-  details.className = "error-details";
-
-  const toggle = document.createElement("button");
-  toggle.className = "error-details__toggle";
-  toggle.textContent = "Show details";
-
-  const content = document.createElement("div");
-  content.className = "error-details__content";
-  content.textContent = errorMessage;
-  content.style.display = "none";
-
-  toggle.addEventListener("click", () => {
-    const isVisible = content.style.display !== "none";
-    content.style.display = isVisible ? "none" : "block";
-    toggle.textContent = isVisible ? "Show details" : "Hide details";
-  });
-
-  details.appendChild(toggle);
-  details.appendChild(content);
-  container.appendChild(details);
+    await window.setSize(new LogicalSize(width, height));
+  } catch {
+    // Window sizing is unavailable when running the frontend outside Tauri.
+  }
 }
 
 export function initMetadataPanel(controller: FileController): void {
   const container = document.getElementById("metadata-panel");
   if (!container) return;
 
-  let prevPreviewUrl: string | null = null;
-
   function render(): void {
-    if (prevPreviewUrl) {
-      URL.revokeObjectURL(prevPreviewUrl);
-      prevPreviewUrl = null;
-    }
-
     const entry = controller.getSelectedEntry();
 
     if (!entry) {
@@ -111,30 +98,15 @@ export function initMetadataPanel(controller: FileController): void {
       img.src = entry.previewUrl;
       img.alt = entry.name;
       img.loading = "lazy";
+      img.addEventListener("load", () => {
+        void fitWindowToContent(container!);
+      });
       previewSection.appendChild(img);
       container!.appendChild(previewSection);
 
-      prevPreviewUrl = entry.previewUrl;
     }
 
     if (entry.metadata) {
-      const infoSection = document.createElement("div");
-      infoSection.className = "metadata-section";
-
-      const infoTitle = document.createElement("div");
-      infoTitle.className = "metadata-section__title";
-      infoTitle.textContent = "File Info";
-      infoSection.appendChild(infoTitle);
-
-      infoSection.appendChild(
-        createField("File Name", entry.name)
-      );
-      infoSection.appendChild(
-        createField("Status", entry.state)
-      );
-
-      container!.appendChild(infoSection);
-
       const metaSection = document.createElement("div");
       metaSection.className = "metadata-section";
 
@@ -150,37 +122,20 @@ export function initMetadataPanel(controller: FileController): void {
         createField("AI System", entry.metadata.aiSystem)
       );
       metaSection.appendChild(
-        createField("AI System Version", entry.metadata.aiSystemVersion)
-      );
-      metaSection.appendChild(
-        createField("Digital Source Type", entry.metadata.digitalSourceType)
-      );
-      metaSection.appendChild(
         createField("Source URL", entry.metadata.sourceUrl)
       );
 
       container!.appendChild(metaSection);
     }
-
-    const errorSection = document.createElement("div");
-    errorSection.className = "metadata-section";
-
-    const errorTitle = document.createElement("div");
-    errorTitle.className = "metadata-section__title";
-    errorTitle.textContent = "Status";
-    errorSection.appendChild(errorTitle);
-
-    errorSection.appendChild(
-      createField("Message", getErrorMessage(entry.state))
-    );
-
-    if (entry.errorMessage) {
-      showErrorDetails(errorSection, entry.errorMessage);
-    }
-
-    container!.appendChild(errorSection);
+    requestAnimationFrame(() => void fitWindowToContent(container!));
   }
 
   controller.subscribe(render);
+  const resizeObserver = new ResizeObserver(() => {
+    if (container!.scrollHeight > container!.clientHeight + 1) {
+      requestAnimationFrame(() => void fitWindowToContent(container!));
+    }
+  });
+  resizeObserver.observe(container);
   render();
 }
