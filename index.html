@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PromptLens</title>
+    <link rel="stylesheet" href="/src/styles/app.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="toolbar">
+        <h1 class="toolbar__title">PromptLens</h1>
+        <button id="open-files" class="toolbar__button">Open PNG</button>
+      </header>
+      <main class="layout">
+        <aside id="file-list" class="file-list">
+          <p class="file-list__empty">Drop PNG files here or click Open</p>
+        </aside>
+        <section id="metadata-panel" class="metadata-panel">
+          <p class="metadata-panel__empty">Select a file to view metadata</p>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
