@@ -1,5 +1,10 @@
 # PromptLens
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/thejohnd0e/prompt-lens)](https://github.com/thejohnd0e/prompt-lens/releases/latest)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11-blueviolet.svg)]()
+[![Tauri](https://img.shields.io/badge/Built%20with-Tauri%202-ffc131.svg)]()
+
 PromptLens is a local Windows application for viewing AI-generation metadata stored in PNG files. It is intended for images saved by AI image tools and browser extensions that write prompts and related information into PNG metadata.
 
 The application is read-only: it never changes the source image. Files are parsed locally on the user's computer and no image, prompt, URL, or file history is uploaded or saved.
