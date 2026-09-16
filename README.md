@@ -130,4 +130,4 @@ PromptLens currently supports PNG reading only. It does not edit metadata, expor
 
 ## License
 
-No license has been selected for this project yet.
+MIT — see [LICENSE](LICENSE) for details.
