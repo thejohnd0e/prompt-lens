@@ -101,12 +101,6 @@ Run the frontend development server:
 npm run dev
 ```
 
-Run unit tests:
-
-```powershell
-npx vitest
-```
-
 Run a production frontend build:
 
 ```powershell
@@ -126,10 +120,6 @@ dist/portable/PromptLens.exe
 ```
 
 The Tauri build also requires Rust, the MSVC build tools, and WebView2 on the target Windows system.
-
-## Testing Scope
-
-The test suite uses synthetic fixtures only. It covers CRC validation, PNG chunks, XMP parsing, XML safety checks, IPTC AI fields, Unicode text, and missing metadata. Real personal prompts and URLs must not be added to fixtures.
 
 ## Current Scope
 
