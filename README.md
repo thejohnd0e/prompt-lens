@@ -1,8 +1,8 @@
 # PromptLens
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.08-blue.svg)](https://github.com/thejohnd0e/prompt-lens/releases/latest)
-[![Platform](https://img.shields.io/badge/Platform-Windows-purple.svg)]()
+[![Version](https://img.shields.io/badge/version-1.5.3-blue.svg)](https://github.com/thejohnd0e/prompt-lens/releases/latest)
+[![Platform](https://img.shields.io/badge/Platform-Windows-purple.svg)](#requirements)
 [![Tauri](https://img.shields.io/badge/Tauri-2-orange.svg)](https://tauri.app)
 [![Rust](https://img.shields.io/badge/Rust-orange.svg)](https://www.rust-lang.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6.svg)](https://www.typescriptlang.org)
@@ -12,6 +12,15 @@ PromptLens is a local Windows application for viewing AI-generation metadata sto
 The application is read-only: it never changes the source image. Files are parsed locally on the user's computer and no image, prompt, URL, or file history is uploaded or saved.
 
 Project repository: https://github.com/thejohnd0e/prompt-lens
+
+## Download
+
+Download the latest portable Windows executable from the [Releases](https://github.com/thejohnd0e/prompt-lens/releases/latest) page. No installer is required.
+
+## Requirements
+
+- Windows 10 or 11, x64
+- Microsoft WebView2 Runtime
 
 ## What It Shows
 
@@ -57,7 +66,7 @@ An error in one file does not stop processing of the other selected files.
 ## Privacy And Security
 
 - Windows-only, local operation
-- No network requests, telemetry, accounts, or external resources
+- No network requests for image processing, telemetry, or accounts; the optional GitHub link opens in the system browser
 - Source PNG files are never modified
 - No recent-file history or settings are stored
 - Maximum input size is 100 MiB
@@ -74,7 +83,7 @@ An error in one file does not stop processing of the other selected files.
 - Use **Copy** next to a field to copy its exact value.
 - Use the remove button to remove one file from the list.
 
-The application uses a dark theme and adjusts the window height to the displayed content when possible. Windows systems must have Microsoft WebView2 installed. If WebView2 is unavailable, the application should show a native error instead of crashing.
+The application uses a dark theme and adjusts the window height to the displayed content when possible. If WebView2 is unavailable, the application should show a native error instead of crashing.
 
 ## Technology
 
@@ -85,7 +94,6 @@ The application uses a dark theme and adjusts the window height to the displayed
 - Vanilla DOM APIs, without React
 - `saxes` for restricted XML parsing
 - `fflate` for browser-compatible decompression
-- Vitest for unit tests
 
 ## Development
 
@@ -113,10 +121,10 @@ Build the Windows release:
 npm run tauri build -- --no-bundle
 ```
 
-The portable executable is copied to:
+The executable is generated at:
 
 ```text
-dist/portable/PromptLens.exe
+src-tauri/target/release/prompt-lens.exe
 ```
 
 The Tauri build also requires Rust, the MSVC build tools, and WebView2 on the target Windows system.

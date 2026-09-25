@@ -2,7 +2,7 @@
 name = "prompt-lens"
 version = "1.5.3"
 description = "AI Prompt Metadata Viewer"
-authors = ["you"]
+authors = ["thejohnd0e"]
 edition = "2021"
 
 [lib]
