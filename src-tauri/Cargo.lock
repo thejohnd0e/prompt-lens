@@ -2673,7 +2673,7 @@ dependencies = [
 
 [[package]]
 name = "prompt-lens"
-version = "1.5.3"
+version = "1.5.4"
 dependencies = [
  "serde",
  "serde_json",

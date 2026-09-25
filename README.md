@@ -1,7 +1,7 @@
 # PromptLens
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.5.3-blue.svg)](https://github.com/thejohnd0e/prompt-lens/releases/latest)
+[![Version](https://img.shields.io/badge/version-1.5.4-blue.svg)](https://github.com/thejohnd0e/prompt-lens/releases/latest)
 [![Platform](https://img.shields.io/badge/Platform-Windows-purple.svg)](#requirements)
 [![Tauri](https://img.shields.io/badge/Tauri-2-orange.svg)](https://tauri.app)
 [![Rust](https://img.shields.io/badge/Rust-orange.svg)](https://www.rust-lang.org)
