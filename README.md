@@ -11,6 +11,8 @@ PromptLens is a local Windows application for viewing AI-generation metadata sto
 
 The application is read-only: it never changes the source image. Files are parsed locally on the user's computer and no image, prompt, URL, or file history is uploaded or saved.
 
+PromptLens was created as a companion application for [PromptKeep](https://github.com/thejohnd0e/PromptKeep), a Chrome extension that saves AI image prompts and related metadata in PNG files.
+
 Project repository: https://github.com/thejohnd0e/prompt-lens
 
 ## Download
