@@ -11,13 +11,17 @@ PromptLens is a local Windows application for viewing AI-generation metadata sto
 
 The application is read-only: it never changes the source image. Files are parsed locally on the user's computer and no image, prompt, URL, or file history is uploaded or saved.
 
-PromptLens was created as a companion application for [PromptKeep](https://github.com/thejohnd0e/PromptKeep), a Chrome extension that saves AI image prompts and related metadata in PNG files.
+PromptLens was created as a companion application for [PromptKeep](https://github.com/thejohnd0e/PromptKeep), a Chrome extension that saves AI image prompts and related metadata in PNG files. It also reads PNG files produced by [Meta-Pic-Interrogator](https://github.com/thejohnd0e/Meta-Pic-Interrogator).
 
 Project repository: https://github.com/thejohnd0e/prompt-lens
 
 ## Download
 
-Download the latest portable Windows executable from the [Releases](https://github.com/thejohnd0e/prompt-lens/releases/latest) page. No installer is required.
+Download the latest build from the [Releases](https://github.com/thejohnd0e/prompt-lens/releases/latest) page:
+
+- `PromptLens_<version>_x64-setup.exe` - installer; choose installation for the current user or for all users (administrator rights are requested for all users)
+- `PromptLens_<version>_x64_en-US.msi` - MSI package, installs for all users
+- `prompt-lens.exe` - portable executable, no installation required
 
 ## Requirements
 
@@ -29,7 +33,7 @@ Download the latest portable Windows executable from the [Releases](https://gith
 For each selected PNG, PromptLens can display:
 
 - Original prompt
-- AI system name
+- AI system name (and model, when available)
 - Source URL
 - Image preview
 - File processing state
@@ -41,8 +45,12 @@ Several PNG files can be opened at once. The file list shows the processing stat
 PromptLens reads the following PNG metadata sources in this order:
 
 1. XMP from the `iTXt` chunk with keyword `XML:com.adobe.xmp`
-2. Prompt fallback from the `iTXt` chunk with keyword `parameters`
-3. Source URL from the `tEXt` chunk with keyword `Source`
+2. Prompt fallback from the `parameters` text chunk
+3. Prompt fallback from the `Description` text chunk (used by Meta-Pic-Interrogator)
+4. Provider and model from the `MetaPic:Interrogator` JSON chunk, shown as AI system
+5. Source URL from the `tEXt` chunk with keyword `Source`
+
+Keywords are matched case-insensitively (`Parameters` and `parameters` are equivalent), and both `iTXt` and `tEXt` chunks are supported. Line breaks in prompts are preserved.
 
 The XMP reader supports these IPTC AI fields:
 
@@ -85,7 +93,7 @@ An error in one file does not stop processing of the other selected files.
 - Use **Copy** next to a field to copy its exact value.
 - Use the remove button to remove one file from the list.
 
-The application uses a dark theme and adjusts the window height to the displayed content when possible. If WebView2 is unavailable, the application should show a native error instead of crashing.
+The interface follows the system light or dark theme and adjusts the window height to the displayed content when possible. If WebView2 is unavailable, the application should show a native error instead of crashing.
 
 ## Technology
 
@@ -117,16 +125,18 @@ Run a production frontend build:
 npm run build
 ```
 
-Build the Windows release:
+Build the Windows release (portable executable and installers):
 
 ```powershell
-npm run tauri build -- --no-bundle
+npm run tauri build
 ```
 
-The executable is generated at:
+Build outputs:
 
 ```text
 src-tauri/target/release/prompt-lens.exe
+src-tauri/target/release/bundle/nsis/PromptLens_<version>_x64-setup.exe
+src-tauri/target/release/bundle/msi/PromptLens_<version>_x64_en-US.msi
 ```
 
 The Tauri build also requires Rust, the MSVC build tools, and WebView2 on the target Windows system.
