@@ -71,6 +71,8 @@ export async function readAiMetadata(
 
   let xmpRaw = "";
   let parameters = "";
+  let description = "";
+  let metapic = "";
   let sourceUrl = "";
 
   try {
@@ -84,14 +86,18 @@ export async function readAiMetadata(
           if (xmpData) {
             xmpRaw = xmpData.raw;
           }
-        } else if (parsed.keyword === "parameters") {
-          parameters = parsed.value;
+        } else {
+          const key = parsed.keyword.toLowerCase();
+          if (key === "parameters") parameters = parsed.value;
+          else if (key === "description") description = parsed.value;
+          else if (key === "metapic:interrogator") metapic = parsed.value;
         }
       } else if (chunk.type === "tEXt") {
         const parsed = parseTExT(chunk.data);
-        if (parsed.keyword === "Source") {
-          sourceUrl = parsed.value;
-        }
+        const key = parsed.keyword.toLowerCase();
+        if (key === "source") sourceUrl = parsed.value;
+        else if (key === "parameters") parameters = parsed.value;
+        else if (key === "description") description = parsed.value;
       }
     }
   } catch (e) {
@@ -125,9 +131,23 @@ export async function readAiMetadata(
     }
   }
 
+  // Meta-Pic-Interrogator writes provider/model as JSON in "MetaPic:Interrogator".
+  if (metapic && !aiFields.aiSystem) {
+    try {
+      const info = JSON.parse(metapic) as { provider?: unknown; model?: unknown };
+      if (typeof info.provider === "string") aiFields.aiSystem = info.provider;
+      if (typeof info.model === "string") aiFields.aiSystemVersion = info.model;
+    } catch {
+      // not JSON, ignore
+    }
+  }
+
   let prompt = aiFields.prompt;
   if (!prompt && parameters) {
     prompt = parameters;
+  }
+  if (!prompt && description) {
+    prompt = description;
   }
   prompt = truncate(prompt, MAX_PROMPT_LENGTH);
 
@@ -139,7 +159,7 @@ export async function readAiMetadata(
     state = "ready";
   } else if (xmpRaw || hasAny) {
     state = "partial";
-  } else if (parameters || sourceUrl) {
+  } else if (parameters || description || sourceUrl) {
     state = "partial";
   } else {
     state = "absent";

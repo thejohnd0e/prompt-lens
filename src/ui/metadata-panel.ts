@@ -17,6 +17,7 @@ function createField(
   valueEl.className = "field__value";
   if (value) {
     valueEl.textContent = value;
+    if (value.includes("\n")) valueEl.classList.add("field__value--multiline");
   } else {
     valueEl.textContent = "Not available";
     valueEl.classList.add("field__value--empty");
